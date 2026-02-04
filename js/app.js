@@ -133,8 +133,10 @@ function updateDashboard() {
         let totalEntries = 0;
         
         reportsData.forEach(report => {
-            Object.values(report.members).forEach(rating => {
-                totalRatings += rating;
+            Object.values(report.members).forEach(memberData => {
+                // Handle both formats: {rating: 2, description: "..."} and plain number
+                const ratingValue = typeof memberData === 'object' ? memberData.rating : memberData;
+                totalRatings += ratingValue;
                 totalEntries++;
             });
         });
