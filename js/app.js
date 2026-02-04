@@ -54,6 +54,12 @@ async function loadReports() {
             // إذا لم توجد بيانات محلية، حاول تحميل من JSON
             const response = await fetch('data/reports.json');
             reportsData = await response.json();
+            // احفظ النسخة المسترجعة في localStorage لتسهيل التشغيل المحلي لاحقاً
+            try {
+                localStorage.setItem('reportsData', JSON.stringify(reportsData));
+            } catch (e) {
+                console.warn('Unable to save fetched reports to localStorage:', e);
+            }
         }
         
         // تحديث واجهة المستخدم
