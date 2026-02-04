@@ -322,40 +322,18 @@
                 notes: notes || ''
             };
             
+            // بدلاً من حفظ التقرير محلياً، سنقوم بفتح صفحة عرض التقرير الخاصة وتضمين JSON في الـ URL fragment
             try {
-                // حفظ التقرير في localStorage
-                let allReports = JSON.parse(localStorage.getItem('reportsData')) || [];
-                
-                // التحقق من عدم تكرار التقرير
-                const existingIndex = allReports.findIndex(r => r.date === reportDate);
-                if (existingIndex !== -1) {
-                    const confirmUpdate = confirm(`تقرير لتاريخ ${reportDate} موجود بالفعل. هل تريد تحديثه؟`);
-                    if (confirmUpdate) {
-                        allReports[existingIndex] = report;
-                    } else {
-                        return;
-                    }
-                } else {
-                    allReports.push(report);
-                }
-                
-                // حفظ البيانات
-                localStorage.setItem('reportsData', JSON.stringify(allReports));
-                
-                // عرض رسالة النجاح
-                alert('✓ تم حفظ التقرير بنجاح!\nيمكنك الآن العودة إلى الصفحة الرئيسية لعرض التقرير.');
-                
-                // إعادة تعيين النموذج
+                const jsonStr = encodeURIComponent(JSON.stringify(report));
+                const viewUrl = `report-view.html#${jsonStr}`;
+                window.open(viewUrl, '_blank');
+
+                // إعادة تعيين النموذج محلياً فقط دون تخزين
                 resetForm();
-                
-                // العودة للصفحة الرئيسية بعد 2 ثانية
-                setTimeout(() => {
-                    window.location.href = '../index.html';
-                }, 2000);
-                
+                alert('✓ تم إنشاء معاينة التقرير في نافذة جديدة (لم يتم حفظه).');
             } catch (error) {
-                console.error('خطأ في حفظ التقرير:', error);
-                alert('حدث خطأ في حفظ التقرير. يرجى المحاولة مرة أخرى.');
+                console.error('خطأ في إنشاء معاينة التقرير:', error);
+                alert('حدث خطأ أثناء إنشاء معاينة التقرير.');
             }
         }
         

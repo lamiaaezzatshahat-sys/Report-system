@@ -79,7 +79,9 @@
                     <div class="chart-container">
                         <canvas id="monthlyChart"></canvas>
                     </div>
-                    <p class="chart-summary" id="monthly-summary">يتم تحديث البيانات...</p>
+                    <div class="chart-summary" id="monthly-summary">
+                        <!-- سيتم ملؤها بالجافاسكريبت -->
+                    </div>
                 </div>
                 
                 <div class="card">
@@ -178,13 +180,584 @@
                 <!-- محتوى التقرير -->
             </div>
             <div class="modal-footer">
-                <button class="btn-primary" onclick="openReport()"><i class="fas fa-external-link-alt"></i> فتح التقرير</button>
-                <button class="btn-secondary" onclick="printReport()"><i class="fas fa-print"></i> طباعة</button>
+                <button class="btn-primary" onclick="openReport()">
+                    <i class="fas fa-external-link-alt"></i> فتح التقرير الكامل
+                </button>
+                <button class="btn-json" onclick="exportCurrentReportAsJSON()">
+                    <i class="fas fa-file-export"></i> تصدير JSON
+                </button>
+                <button class="btn-secondary" onclick="printReport()">
+                    <i class="fas fa-print"></i> طباعة
+                </button>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/app.js"></script>
+    
+    <script>
+        // بيانات مباشرة في الصفحة للتجربة
+        const embeddedReports = [
+            {
+                "date": "2026-02-04",
+                "members": {
+                    "نادر": {
+                        "rating": 5,
+                        "description": [
+                            "البشمهندس اسامه طالب تعديل في time sheet",
+                            "اشتغل في analysis اللي بيربط المسارات المتقطعه الناتجه عن tajectory ودا هيحسن من النواتج بشكل كبير",
+                            "بيغير في اختيار Model yolo عشان يدي دقه اعلي في التعرف علي الأجسام وكمان السرعه بتفرق علي الويب سايت",
+                            "اختبار التغيرات علي فيديوهات اكبر هو كان شغال علي دقيقه واحده دلوقتي هيجرب فيديو 5 دقايق",
+                            "اكتشف انه الفيديو الصغير المسارات مش بتطلع متقطعه قوي زي الفيديوهات الكبيره ف ده هيحسن من النواتج"
+                        ]
+                    },
+                    "وليد": {
+                        "rating": 4,
+                        "description": [
+                            "رفع backEnd علي السيرفر بتاعنا من غير الداتا بيز والجداول",
+                            "لما جه يرفع الداتا قابلته مشكله في migration كان بيحلها طول اليوم",
+                            "rating=4 بسبب الجهد المبذول في رفع الباك اند علي السيرفر رغم المشاكل اللي واجهته وكان المفروض يكون علي اخر اليوم تم الانتهاء من جميع المشاكل"
+                        ]
+                    },
+                    "أحمد": {
+                        "rating": 0,
+                        "description": ["شغال مع تيم الدراسات"]
+                    },
+                    "محمد": {
+                        "rating": 0,
+                        "description": ["غائب"]
+                    },
+                    "لمياء": {
+                        "rating": 4,
+                        "description": [
+                            "عمل سيستم الي التقرير اليومي للتيم ولكن بامكانيات بسيطه ولكت مجهده عباره عن HTML و CSS و JS و بدون باك اند",
+                            "بحث عن سيرفر لرفع الويب سايت",
+                            "بحث عن سعر تراخيص MATLAB",
+                            "rating=4 بسبب الجهد المبذول في عمل السيستم اليوم رغم انه بسيط جدا"
+                        ]
+                    }
+                },
+                "notes": [
+                    "تم الانهاء من موقع الويب اللي شغال عليه وليد بنسبه %90",
+                    "ارسال الي شركه Mathworks بخصوص تراخيص الماتلاب للفريق عشان نقدر نشتغل بيها في المشاريع بتاعتنا",
+                    "لم يتم الرد علي الميل لحد دلوقتي"
+                ]
+            }
+        ];
+        
+        // تعطيل دالة loadReports القديمة واستخدام البيانات المضمنة
+        console.log("🚀 استخدام البيانات المضمنة مباشرة");
+        console.log("عدد التقارير المضمنة:", embeddedReports.length);
+        console.log("التقرير الأول:", embeddedReports[0]);
+        
+        // استبدال app.js بـ كود مبسط
+        // بيانات التقارير
+        let reportsData = embeddedReports;
+        
+        // مساعدات لتوحيد قيم الأعضاء
+        function getMemberRating(memberData) {
+            if (!memberData) return 0;
+            
+            if (typeof memberData === 'number') {
+                return memberData;
+            }
+            
+            if (typeof memberData === 'object' && memberData !== null) {
+                const rating = Number(memberData.rating);
+                return isNaN(rating) ? 0 : rating;
+            }
+            
+            return 0;
+        }
+        
+        function getRatingsArray(report) {
+            return Object.values(report.members)
+                .map(getMemberRating)
+                .filter(rating => rating > 0);
+        }
+        
+        // عناصر DOM
+        let currentDateEl, totalReportsEl, teamMembersEl, avgRatingEl;
+        let membersListEl, reportsContainerEl, reportsArchiveEl, yearButtonsEl;
+        
+        // تهيئة التطبيق
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("✅ بدء تحميل النظام مع البيانات المضمنة");
+            
+            // تعيين عناصر DOM
+            currentDateEl = document.getElementById('current-date');
+            totalReportsEl = document.getElementById('total-reports');
+            teamMembersEl = document.getElementById('team-members');
+            avgRatingEl = document.getElementById('avg-rating');
+            membersListEl = document.getElementById('members-list');
+            reportsContainerEl = document.getElementById('reports-container');
+            reportsArchiveEl = document.getElementById('reports-archive');
+            yearButtonsEl = document.getElementById('year-buttons');
+            
+            // تعيين التاريخ الحالي
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            currentDateEl.textContent = now.toLocaleDateString('ar-SA', options);
+            
+            // تعيين السنة الحالية في الفوتر
+            document.getElementById('current-year').textContent = now.getFullYear();
+            
+            // استخدام البيانات المضمنة مباشرة
+            console.log("📊 تقارير جاهزة:", reportsData.length);
+            
+            // تحديث واجهة المستخدم
+            updateDashboard();
+            displayReports();
+            displayArchive();
+            updateStatistics();
+            initializeChart();
+            setupSmoothScrolling();
+            setupSearchAndFilter();
+            
+            console.log("✅ اكتمل تحميل النظام بنجاح");
+        });
+        
+        // تحديث لوحة التحكم
+        function updateDashboard() {
+            console.log("📈 تحديث لوحة التحكم");
+            console.log("عدد التقارير:", reportsData.length);
+            
+            // عدد التقارير
+            totalReportsEl.textContent = reportsData.length;
+            
+            // عدد أعضاء الفريق
+            if (reportsData.length > 0) {
+                const firstReport = reportsData[0];
+                const membersCount = Object.keys(firstReport.members).length;
+                teamMembersEl.textContent = membersCount;
+                console.log("عدد الأعضاء في التقرير الأول:", membersCount);
+            }
+            
+            // متوسط التقييم (تجاهل التقييمات الصفرية)
+            if (reportsData.length > 0) {
+                let totalRatings = 0;
+                let totalEntries = 0;
+                
+                reportsData.forEach(report => {
+                    Object.values(report.members).forEach(memberData => {
+                        const ratingValue = getMemberRating(memberData);
+                        if (ratingValue > 0) {
+                            totalRatings += ratingValue;
+                            totalEntries++;
+                        }
+                    });
+                });
+                
+                const avgRating = totalEntries > 0 ? totalRatings / totalEntries : 0;
+                avgRatingEl.textContent = avgRating.toFixed(1);
+                console.log("متوسط التقييم:", avgRating.toFixed(1), "(من", totalEntries, "تقييم)");
+            }
+            
+            // تحديث قائمة الأعضاء
+            updateMembersList();
+        }
+        
+        // باقي الدوال الأساسية
+        function updateMembersList() {
+            if (reportsData.length === 0) {
+                membersListEl.innerHTML = '<p class="no-data">لا توجد بيانات للأعضاء</p>';
+                return;
+            }
+            
+            // جمع تقييمات كل عضو
+            const memberStats = {};
+            
+            reportsData.forEach(report => {
+                Object.entries(report.members).forEach(([member, data]) => {
+                    if (!memberStats[member]) {
+                        memberStats[member] = {
+                            ratings: [],
+                            count: 0,
+                            sum: 0
+                        };
+                    }
+                    const rating = getMemberRating(data);
+                    if (rating > 0) {
+                        memberStats[member].ratings.push(rating);
+                        memberStats[member].count++;
+                        memberStats[member].sum += rating;
+                    }
+                });
+            });
+            
+            // حساب متوسط التقييم لكل عضو
+            const memberAverages = {};
+            Object.keys(memberStats).forEach(member => {
+                const data = memberStats[member];
+                if (data.count > 0) {
+                    memberAverages[member] = {
+                        average: (data.sum / data.count).toFixed(1),
+                        count: data.count
+                    };
+                }
+            });
+            
+            // عرض الأعضاء
+            membersListEl.innerHTML = '';
+            
+            Object.entries(memberAverages).forEach(([member, data]) => {
+                const progressPercent = (data.average / 5) * 100;
+                const stars = getStarsHTML(data.average);
+                
+                const memberItem = document.createElement('div');
+                memberItem.className = 'member-circle-item';
+                memberItem.innerHTML = `
+                    <div class="circular-progress" style="--progress-value: ${progressPercent}%">
+                        <div class="circular-progress-text">
+                            ${data.average}
+                            <small>/5</small>
+                        </div>
+                    </div>
+                    <div class="member-circle-name">${member}</div>
+                    <div class="member-rating">${stars}</div>
+                    <small style="color: #666; font-size: 0.8rem;">${data.count} تقييم</small>
+                `;
+                
+                membersListEl.appendChild(memberItem);
+            });
+        }
+        
+        function getStarsHTML(rating) {
+            const numericRating = parseFloat(rating);
+            if (numericRating === 0) return '<i class="far fa-star"></i>'.repeat(5);
+            
+            let starsHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= Math.floor(numericRating)) {
+                    starsHTML += '<i class="fas fa-star rating-star"></i>';
+                } else if (i - 0.5 <= numericRating) {
+                    starsHTML += '<i class="fas fa-star-half-alt rating-star"></i>';
+                } else {
+                    starsHTML += '<i class="far fa-star rating-star"></i>';
+                }
+            }
+            return starsHTML;
+        }
+        
+        function displayReports() {
+            if (reportsData.length === 0) {
+                reportsContainerEl.innerHTML = '<p class="no-data">لا توجد تقارير لعرضها</p>';
+                return;
+            }
+            
+            // عرض آخر 5 تقارير
+            const recentReports = [...reportsData].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+            
+            reportsContainerEl.innerHTML = '';
+            
+            recentReports.forEach(report => {
+                const reportCard = createReportCard(report);
+                reportsContainerEl.appendChild(reportCard);
+            });
+        }
+        
+        function createReportCard(report) {
+            const reportDate = new Date(report.date);
+            const formattedDate = reportDate.toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            
+            const ratings = getRatingsArray(report);
+            const avgRating = ratings.length > 0 ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length : 0;
+            
+            // العضو الأفضل
+            const membersWithRating = Object.entries(report.members)
+                .filter(([member, data]) => getMemberRating(data) > 0);
+            
+            let bestMember = ['لا يوجد', {rating: 0}];
+            if (membersWithRating.length > 0) {
+                bestMember = membersWithRating.reduce((a, b) => getMemberRating(a[1]) > getMemberRating(b[1]) ? a : b);
+            }
+            
+            const card = document.createElement('div');
+            card.className = 'report-card';
+            card.innerHTML = `
+                <div class="report-header">
+                    <div class="report-date">${formattedDate}</div>
+                    <div class="report-actions">
+                        <button class="btn-primary" onclick="viewReport('${report.date}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-secondary" onclick="printReportCard('${report.date}')">
+                            <i class="fas fa-print"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="report-summary">
+                    <div><strong>متوسط التقييم:</strong> ${avgRating > 0 ? avgRating.toFixed(1) : 'لا يوجد'}</div>
+                    <div><strong>أعلى تقييم:</strong> ${bestMember[1].rating > 0 ? `${bestMember[0]} (${bestMember[1].rating})` : 'لا يوجد'}</div>
+                    <div><strong>عدد الأعضاء:</strong> ${Object.keys(report.members).length}</div>
+                </div>
+                <div class="report-members">
+                    ${Object.entries(report.members).map(([member, data]) => {
+                        const rating = getMemberRating(data);
+                        return `<span class="member-tag ${rating === 0 ? 'no-rating' : ''}">${member}: ${rating > 0 ? rating : 'غير مقيم'}</span>`;
+                    }).join('')}
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        function viewReport(date) {
+    const report = reportsData.find(r => r.date === date);
+    if (!report) {
+        alert('التقرير غير موجود');
+        return;
+    }
+    
+    const reportDate = new Date(report.date);
+    const formattedDate = reportDate.toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    
+    // حساب متوسط التقييم
+    const ratings = getRatingsArray(report);
+    const avgRating = ratings.length > 0 ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length : 0;
+    
+    document.getElementById('modal-title').textContent = `تقرير ${formattedDate}`;
+    document.getElementById('modal-body').innerHTML = `
+        <div class="report-modal-view">
+            <div class="report-header-info">
+                <div class="report-date-large">
+                    <i class="fas fa-calendar-alt"></i>
+                    ${formattedDate}
+                </div>
+                <div class="report-avg-rating">
+                    <i class="fas fa-star"></i>
+                    متوسط التقييم: <strong>${avgRating > 0 ? avgRating.toFixed(1) + '/5' : 'لا يوجد'}</strong>
+                </div>
+            </div>
+            
+            <div class="members-report-container">
+                ${Object.entries(report.members).map(([member, data]) => {
+                    const rating = getMemberRating(data);
+                    const ratingClass = rating > 0 ? 
+                        (rating >= 4 ? 'rating-high' : rating >= 3 ? 'rating-medium' : 'rating-low') : 
+                        'rating-none';
+                    
+                    return `
+                    <div class="member-report-card ${ratingClass}">
+                        <div class="member-report-header">
+                            <div class="member-report-name">
+                                <i class="fas fa-user"></i>
+                                ${member}
+                            </div>
+                            <div class="member-report-rating-display">
+                                <div class="rating-badge">
+                                    <span class="rating-number">${rating > 0 ? rating : 'غير مقيم'}</span>
+                                    <span class="rating-label">${rating > 0 ? '/5' : ''}</span>
+                                </div>
+                                <div class="rating-stars-display">
+                                    ${getStarsHTML(rating)}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="member-report-description">
+                            <div class="description-title">
+                                <i class="fas fa-comment-dots"></i>
+                                <strong>التقييم التفصيلي:</strong>
+                            </div>
+                            <div class="description-content">
+                                ${Array.isArray(data.description) ? 
+                                    data.description.map(line => `<div class="description-line">${line}</div>`).join('') : 
+                                    `<div class="description-line">${data.description || 'لا يوجد وصف'}</div>`
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="member-report-footer">
+                            <div class="performance-level">
+                                <i class="fas fa-chart-line"></i>
+                                مستوى الأداء: <strong>${getPerformanceLevel(rating)}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }).join('')}
+            </div>
+            
+            ${report.notes && report.notes.length > 0 ? `
+            <div class="report-notes-section">
+                <div class="notes-title">
+                    <i class="fas fa-sticky-note"></i>
+                    <strong>ملاحظات إضافية:</strong>
+                </div>
+                <div class="notes-content">
+                    ${Array.isArray(report.notes) ? 
+                        report.notes.map(note => `<div class="note-item">${note}</div>`).join('') : 
+                        `<div class="note-item">${report.notes}</div>`
+                    }
+                </div>
+            </div>
+            ` : ''}
+        </div>
+    `;
+    
+    document.getElementById('report-modal').style.display = 'block';
+    document.getElementById('report-modal').dataset.reportDate = date;
+}
+
+// دالة لتحديد مستوى الأداء
+function getPerformanceLevel(rating) {
+    if (rating === 0) return 'غير مقيم';
+    if (rating >= 4.5) return 'متميز جداً';
+    if (rating >= 4) return 'ممتاز';
+    if (rating >= 3.5) return 'جيد جداً';
+    if (rating >= 3) return 'جيد';
+    if (rating >= 2) return 'مقبول';
+    return 'يحتاج تحسين';
+}
+        // دالات أساسية أخرى
+        function displayArchive() {
+            // تنفيذ بسيط
+            if (reportsData.length === 0) {
+                reportsArchiveEl.innerHTML = '<p class="no-data">لا توجد تقارير في الأرشيف</p>';
+                return;
+            }
+            
+            reportsArchiveEl.innerHTML = reportsData.map(report => {
+                const reportDate = new Date(report.date);
+                const formattedDate = reportDate.toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+                return `
+                    <div class="archive-item">
+                        <div class="archive-date">${formattedDate}</div>
+                        <div class="archive-actions">
+                            <button class="btn-primary" onclick="viewReport('${report.date}')">
+                                <i class="fas fa-eye"></i> عرض
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function updateStatistics() {
+            // تنفيذ بسيط
+            const topPerformersEl = document.getElementById('top-performers');
+            const activityDaysEl = document.getElementById('activity-days');
+            
+            topPerformersEl.innerHTML = '<p>تحت التطوير...</p>';
+            activityDaysEl.innerHTML = `
+                <div class="activity-metric">
+                    <div class="metric-value">${reportsData.length}</div>
+                    <div class="metric-label">عدد التقارير</div>
+                </div>
+            `;
+        }
+        
+        function initializeChart() {
+            const ctx = document.getElementById('monthlyChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['الأسبوع 1', 'الأسبوع 2', 'الأسبوع 3', 'الأسبوع 4'],
+                    datasets: [{
+                        label: 'متوسط التقييم',
+                        data: [3.8, 4.2, 4.0, 4.5],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            
+            document.getElementById('monthly-summary').innerHTML = `
+                <div class="chart-summary-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>متوسط التقييم الشهري: <strong>4.1</strong></span>
+                </div>
+            `;
+        }
+        
+        function setupSmoothScrolling() {
+            document.querySelectorAll('nav a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId.startsWith('#')) {
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 80,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                });
+            });
+        }
+        
+        function setupSearchAndFilter() {
+            // تنفيذ بسيط
+            const searchInput = document.getElementById('search-reports');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function() {
+                    console.log('بحث:', this.value);
+                });
+            }
+        }
+        
+        // دالات مساعدة
+        function closeModal() {
+            document.getElementById('report-modal').style.display = 'none';
+        }
+        
+        function printReportCard(date) {
+            const report = reportsData.find(r => r.date === date);
+            if (report) {
+                window.print();
+            }
+        }
+        
+        function printReport() {
+            window.print();
+        }
+        
+        function printOverview() {
+            window.print();
+        }
+        
+        function exportToJSON() {
+            const dataStr = JSON.stringify(reportsData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', 'reports-export.json');
+            linkElement.click();
+        }
+        
+        function exportToCSV() {
+            alert('تصدير CSV قيد التطوير');
+        }
+        
+        function exportCurrentReportAsJSON() {
+            alert('تصدير التقرير الحالي قيد التطوير');
+        }
+        
+        function openReport() {
+            alert('فتح التقرير الكامل قيد التطوير');
+        }
+        
+        // إغلاق المودال عند النقر خارج المحتوى
+        window.onclick = function(event) {
+            const modal = document.getElementById('report-modal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        };
+        
+        console.log("📋 النظام جاهز مع البيانات المضمنة");
+    </script>
 </body>
 </html>
