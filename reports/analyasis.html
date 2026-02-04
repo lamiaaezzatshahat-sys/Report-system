@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحليل أداء الفريق</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .performance-analysis {
+            margin: 40px 0;
+        }
+        
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .analysis-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .analysis-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feedback-wordcloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .feedback-word {
+            background-color: var(--light-color);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .feedback-word:hover {
+            background-color: var(--secondary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .member-performance-history {
+            margin-top: 20px;
+        }
+        
+        .performance-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 15px;
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+        }
+        
+        .timeline-date {
+            min-width: 100px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .timeline-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .timeline-description {
+            flex: 1;
+            font-size: 0.9rem;
+            color: var(--gray-color);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .trend-up {
+            background-color: rgba(39, 174, 96, 0.2);
+            color: #27ae60;
+        }
+        
+        .trend-down {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+        
+        .trend-stable {
+            background-color: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+        }
+        
+        .performance-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .summary-item {
+            text-align: center;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+        }
+        
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .summary-label {
+            font-size: 0.9rem;
+            color: var(--gray-color);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1><i class="fas fa-chart-bar"></i> تحليل أداء الفريق</h1>
+                <p class="subtitle">تحليل مفصل لأداء كل عضو وتطور الأداء مع الوقت</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn-secondary" onclick="window.location.href='index.html'">
+                    <i class="fas fa-arrow-right"></i> العودة للرئيسية
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="performance-analysis">
+            <h2><i class="fas fa-user-chart"></i> تحليل أداء الأعضاء</h2>
+            
+            <div class="analysis-grid">
+                <div class="analysis-card">
+                    <h3><i class="fas fa-trophy"></i> أفضل أداء</h3>
+                    <div id="best-performers">
+                        <!-- سيتم ملؤها بالجافاسكريبت -->
+                    </div>
+                </div>
+                
+                <div class="analysis-card">
+                    <h3><i class="fas fa-chart-line"></i> تطور الأداء</h3>
+                    <div class="chart-container">
+                        <canvas id="performanceTrendChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="analysis-card">
+                    <h3><i class="fas fa-comments"></i> الكلمات الأكثر تكراراً</h3>
+                    <div class="feedback-wordcloud" id="feedback-wordcloud">
+                        <!-- سيتم ملؤها بالجافاسكريبت -->
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="member-details-section">
+            <h2><i class="fas fa-users"></i> تفاصيل أداء كل عضو</h2>
+            <div class="member-selector">
+                <label for="member-select"><i class="fas fa-user"></i> اختر العضو:</label>
+                <select id="member-select" onchange="loadMemberDetails()">
+                    <option value="">اختر عضواً لعرض تفاصيله</option>
+                </select>
+            </div>
+            
+            <div id="member-details-container">
+                <!-- سيتم ملؤها بالجافاسكريبت -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>نظام التقارير اليومية &copy; <span id="current-year"></span> - تحليل أداء الفريق</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/analysis.js"></script>
+</body>
+</html>

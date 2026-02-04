@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام التقارير اليومية</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1><i class="fas fa-chart-line"></i> نظام التقارير اليومية</h1>
+                <p class="subtitle">إدارة وتتبع التقييم اليومي للفريق</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn-primary" onclick="window.location.href='reports/report-template.html'">
+                    <i class="fas fa-plus-circle"></i> إنشاء تقرير جديد
+                </button>
+                <button class="btn-secondary" onclick="printOverview()">
+                    <i class="fas fa-print"></i> طباعة التقرير الشهري
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul class="nav-links">
+                <li><a href="#overview" class="active"><i class="fas fa-chart-pie"></i> نظرة عامة</a></li>
+                <li><a href="#reports"><i class="fas fa-file-alt"></i> التقارير</a></li>
+                <li><a href="#archive"><i class="fas fa-archive"></i> الأرشيف</a></li>
+                <li><a href="#statistics"><i class="fas fa-chart-bar"></i> الإحصائيات</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- البانر الرئيسي -->
+        <section class="dashboard-banner">
+            <div class="banner-card">
+                <i class="fas fa-calendar-alt"></i>
+                <div>
+                    <h3 id="current-date">--/--/----</h3>
+                    <p>تاريخ اليوم</p>
+                </div>
+            </div>
+            <div class="banner-card">
+                <i class="fas fa-file-contract"></i>
+                <div>
+                    <h3 id="total-reports">0</h3>
+                    <p>عدد التقارير</p>
+                </div>
+            </div>
+            <div class="banner-card">
+                <i class="fas fa-users"></i>
+                <div>
+                    <h3 id="team-members">5</h3>
+                    <p>أعضاء الفريق</p>
+                </div>
+            </div>
+            <div class="banner-card">
+                <i class="fas fa-star"></i>
+                <div>
+                    <h3 id="avg-rating">0.0</h3>
+                    <p>متوسط التقييم</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- نظرة عامة -->
+        <section id="overview" class="section">
+            <h2><i class="fas fa-chart-pie"></i> نظرة عامة</h2>
+            <div class="overview-grid">
+                <div class="card">
+                    <h3><i class="fas fa-chart-line"></i> التقييم الشهري</h3>
+                    <div class="chart-container">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                    <p class="chart-summary" id="monthly-summary">يتم تحديث البيانات...</p>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-user-friends"></i> تقييم الأعضاء</h3>
+                    <div class="members-list" id="members-list">
+                        <!-- سيتم ملؤها بالجافاسكريبت -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- آخر تقرير -->
+        <section id="reports" class="section">
+            <h2><i class="fas fa-file-alt"></i> آخر التقارير</h2>
+            <div class="reports-header">
+                <div class="date-filter">
+                    <label for="report-date"><i class="fas fa-calendar"></i> اختر تاريخ:</label>
+                    <input type="date" id="report-date" onchange="filterReportsByDate()">
+                </div>
+                <div class="search-box">
+                    <input type="text" id="search-reports" placeholder="ابحث في التقارير..." onkeyup="searchReports()">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+            
+            <div class="reports-container" id="reports-container">
+                <!-- سيتم ملؤها بالجافاسكريبت -->
+            </div>
+        </section>
+
+        <!-- الأرشيف -->
+        <section id="archive" class="section">
+            <h2><i class="fas fa-archive"></i> الأرشيف</h2>
+            <div class="archive-container">
+                <div class="year-selector">
+                    <h4>اختر السنة:</h4>
+                    <div class="year-buttons" id="year-buttons">
+                        <!-- سيتم ملؤها بالجافاسكريبت -->
+                    </div>
+                </div>
+                <div class="reports-archive" id="reports-archive">
+                    <!-- سيتم ملؤها بالجافاسكريبت -->
+                </div>
+            </div>
+        </section>
+
+        <!-- الإحصائيات -->
+        <section id="statistics" class="section">
+            <h2><i class="fas fa-chart-bar"></i> الإحصائيات</h2>
+            <div class="stats-grid">
+                <div class="card">
+                    <h3><i class="fas fa-trophy"></i> الأعلى تقييماً</h3>
+                    <div id="top-performers">
+                        <!-- سيتم ملؤها بالجافاسكريبت -->
+                    </div>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-calendar-check"></i> أيام النشاط</h3>
+                    <div id="activity-days">
+                        <!-- سيتم ملؤها بالجافاسكريبت -->
+                    </div>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-download"></i> تصدير البيانات</h3>
+                    <div class="export-options">
+                        <button class="btn-export" onclick="exportToJSON()">
+                            <i class="fas fa-file-code"></i> تصدير JSON
+                        </button>
+                        <button class="btn-export" onclick="exportToCSV()">
+                            <i class="fas fa-file-csv"></i> تصدير CSV
+                        </button>
+                        <button class="btn-export" onclick="printOverview()">
+                            <i class="fas fa-print"></i> طباعة التقرير
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>نظام التقارير اليومية &copy; <span id="current-year"></span> - تم التطوير بواسطة Static Reporting System</p>
+            <p class="footer-info">لا يتطلب قاعدة بيانات - يعمل على أي متصفح</p>
+        </div>
+    </footer>
+
+    <!-- نموذج معاينة التقرير -->
+    <div id="report-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">معاينة التقرير</h2>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- محتوى التقرير -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="openReport()"><i class="fas fa-external-link-alt"></i> فتح التقرير</button>
+                <button class="btn-secondary" onclick="printReport()"><i class="fas fa-print"></i> طباعة</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

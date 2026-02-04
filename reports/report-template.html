@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء تقرير جديد</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .report-form-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        
+        .form-title {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+        
+        .rating-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .rating-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+        }
+        
+        .member-name {
+            font-weight: 600;
+            min-width: 100px;
+        }
+        
+        .rating-stars {
+            display: flex;
+            gap: 5px;
+            direction: ltr;
+        }
+        
+        .star {
+            font-size: 1.5rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .star.active {
+            color: #f1c40f;
+        }
+        
+        .rating-value {
+            font-weight: 600;
+            min-width: 30px;
+            text-align: center;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .instructions {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            border-right: 4px solid var(--secondary-color);
+        }
+        
+        .instructions h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions ul {
+            padding-right: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1><i class="fas fa-plus-circle"></i> إنشاء تقرير جديد</h1>
+                <p class="subtitle">املأ البيانات أدناه لحفظ تقرير اليوم</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn-secondary" onclick="window.location.href='../index.html'">
+                    <i class="fas fa-arrow-right"></i> العودة للرئيسية
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="report-form-container">
+            <div class="instructions">
+                <h3><i class="fas fa-info-circle"></i> تعليمات التقييم</h3>
+                <ul>
+                    <li>التقييم من 1 إلى 5 (1 = ضعيف، 5 = ممتاز)</li>
+                    <li>التقييم يعتمد على أداء العضو خلال اليوم</li>
+                    <li>انقر على النجوم لتحديد التقييم المناسب</li>
+                    <li>بعد إكمال التقييم، انقر على "حفظ التقرير"</li>
+                </ul>
+            </div>
+            
+            <div class="form-group">
+                <label for="report-date"><i class="fas fa-calendar-alt"></i> تاريخ التقرير</label>
+                <input type="date" id="report-date" value="">
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-users"></i> تقييم الأعضاء</label>
+                <div class="rating-container" id="rating-container">
+                    <!-- سيتم ملؤها بالجافاسكريبت -->
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="notes"><i class="fas fa-sticky-note"></i> ملاحظات إضافية (اختياري)</label>
+                <textarea id="notes" rows="4" placeholder="أضف أي ملاحظات إضافية هنا..."></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button class="btn-primary" onclick="saveReport()">
+                    <i class="fas fa-save"></i> حفظ التقرير
+                </button>
+                <button class="btn-secondary" onclick="resetForm()">
+                    <i class="fas fa-redo"></i> إعادة تعيين
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>نظام التقارير اليومية &copy; <span id="current-year"></span> - نموذج إنشاء التقرير</p>
+        </div>
+    </footer>
+
+    <script>
+        // أعضاء الفريق الافتراضيين
+        const teamMembers = ["نادر", "وليد", "أحمد", "محمد", "لمياء"];
+        
+        // تهيئة الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            // تعيين السنة الحالية في الفوتر
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            
+            // تعيين تاريخ اليوم كقيمة افتراضية
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('report-date').value = today;
+            document.getElementById('report-date').max = today;
+            
+            // إنشاء تقييمات الأعضاء
+            createRatingInputs();
+        });
+        
+        // إنشاء حقول تقييم الأعضاء
+        function createRatingInputs() {
+            const container = document.getElementById('rating-container');
+            container.innerHTML = '';
+            
+            teamMembers.forEach(member => {
+                const ratingItem = document.createElement('div');
+                ratingItem.className = 'rating-item';
+                ratingItem.innerHTML = `
+                    <div class="member-name">${member}</div>
+                    <div class="rating-stars" data-member="${member}">
+                        <span class="star" data-value="1">☆</span>
+                        <span class="star" data-value="2">☆</span>
+                        <span class="star" data-value="3">☆</span>
+                        <span class="star" data-value="4">☆</span>
+                        <span class="star" data-value="5">☆</span>
+                    </div>
+                    <div class="rating-value" id="rating-value-${member}">0</div>
+                `;
+                
+                container.appendChild(ratingItem);
+                
+                // إضافة حقل الوصف
+                const descriptionDiv = document.createElement('div');
+                descriptionDiv.style.marginTop = '10px';
+                descriptionDiv.style.marginBottom = '15px';
+                descriptionDiv.style.paddingRight = '10px';
+                descriptionDiv.innerHTML = `
+                    <label for="description-${member}" style="font-size: 0.9rem; color: #666; display: block; margin-bottom: 5px;">
+                        <i class="fas fa-comment-dots"></i> وصف أداء ${member}:
+                    </label>
+                    <textarea 
+                        class="description-input" 
+                        id="description-${member}" 
+                        placeholder="اكتب وصفًا تفصيليًا لأداء ${member} اليوم..."
+                        rows="2"
+                        style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Cairo', sans-serif; font-size: 0.9rem; resize: vertical;"
+                    ></textarea>
+                `;
+                container.appendChild(descriptionDiv);
+                
+                // إضافة حدث النقر للنجوم
+                const stars = ratingItem.querySelectorAll('.star');
+                stars.forEach(star => {
+                    star.addEventListener('click', function() {
+                        const memberName = this.parentElement.getAttribute('data-member');
+                        const value = parseInt(this.getAttribute('data-value'));
+                        setRating(memberName, value);
+                    });
+                });
+            });
+        }
+        
+        // تعيين التقييم لعضو معين
+        function setRating(member, rating) {
+            const stars = document.querySelectorAll(`.rating-stars[data-member="${member}"] .star`);
+            const valueElement = document.getElementById(`rating-value-${member}`);
+            
+            // تحديث النجوم
+            stars.forEach(star => {
+                const starValue = parseInt(star.getAttribute('data-value'));
+                if (starValue <= rating) {
+                    star.classList.add('active');
+                    star.textContent = '★';
+                } else {
+                    star.classList.remove('active');
+                    star.textContent = '☆';
+                }
+            });
+            
+            // تحديث القيمة
+            valueElement.textContent = rating;
+        }
+        
+        // الحصول على جميع التقييمات مع الأوصاف
+        function getAllRatings() {
+            const ratings = {};
+            
+            teamMembers.forEach(member => {
+                const valueElement = document.getElementById(`rating-value-${member}`);
+                const ratingValue = parseInt(valueElement.textContent);
+                const description = document.getElementById(`description-${member}`) ? document.getElementById(`description-${member}`).value : '';
+                
+                if (ratingValue > 0) {
+                    ratings[member] = {
+                        rating: ratingValue,
+                        description: description || `تقييم ${ratingValue} من 5`
+                    };
+                }
+            });
+            
+            return ratings;
+        }
+        
+        // حفظ التقرير
+        function saveReport() {
+            const reportDate = document.getElementById('report-date').value;
+            const ratings = getAllRatings();
+            const notes = document.getElementById('notes').value;
+            
+            // التحقق من صحة البيانات
+            if (!reportDate) {
+                alert('يرجى اختيار تاريخ التقرير');
+                return;
+            }
+            
+            if (Object.keys(ratings).length === 0) {
+                alert('يرجى تقييم عضو واحد على الأقل');
+                return;
+            }
+            
+            // إنشاء كائن التقرير
+            const report = {
+                date: reportDate,
+                members: ratings,
+                notes: notes || ''
+            };
+            
+            try {
+                // حفظ التقرير في localStorage
+                let allReports = JSON.parse(localStorage.getItem('reportsData')) || [];
+                
+                // التحقق من عدم تكرار التقرير
+                const existingIndex = allReports.findIndex(r => r.date === reportDate);
+                if (existingIndex !== -1) {
+                    const confirmUpdate = confirm(`تقرير لتاريخ ${reportDate} موجود بالفعل. هل تريد تحديثه؟`);
+                    if (confirmUpdate) {
+                        allReports[existingIndex] = report;
+                    } else {
+                        return;
+                    }
+                } else {
+                    allReports.push(report);
+                }
+                
+                // حفظ البيانات
+                localStorage.setItem('reportsData', JSON.stringify(allReports));
+                
+                // عرض رسالة النجاح
+                alert('✓ تم حفظ التقرير بنجاح!\nيمكنك الآن العودة إلى الصفحة الرئيسية لعرض التقرير.');
+                
+                // إعادة تعيين النموذج
+                resetForm();
+                
+                // العودة للصفحة الرئيسية بعد 2 ثانية
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 2000);
+                
+            } catch (error) {
+                console.error('خطأ في حفظ التقرير:', error);
+                alert('حدث خطأ في حفظ التقرير. يرجى المحاولة مرة أخرى.');
+            }
+        }
+        
+        // إعادة تعيين النموذج
+        function resetForm() {
+            // إعادة تعيين التقييمات
+            teamMembers.forEach(member => {
+                setRating(member, 0);
+            });
+            
+            // إعادة تعيين الملاحظات
+            document.getElementById('notes').value = '';
+            
+            alert('تم إعادة تعيين النموذج. يمكنك البدء من جديد.');
+        }
+
+
+
+    </script>
+</body>
+</html>
