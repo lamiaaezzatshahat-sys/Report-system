@@ -32,6 +32,32 @@ body {
     padding: 0 15px;
 }
 
+/* نظام الشبكة */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 20px;
+}
+
+.col-1 { grid-column: span 1; }
+.col-2 { grid-column: span 2; }
+.col-3 { grid-column: span 3; }
+.col-4 { grid-column: span 4; }
+.col-5 { grid-column: span 5; }
+.col-6 { grid-column: span 6; }
+.col-7 { grid-column: span 7; }
+.col-8 { grid-column: span 8; }
+.col-9 { grid-column: span 9; }
+.col-10 { grid-column: span 10; }
+.col-11 { grid-column: span 11; }
+.col-12 { grid-column: span 12; }
+
+@media (max-width: 768px) {
+    .col-6 { grid-column: span 12; }
+    .col-4 { grid-column: span 6; }
+    .col-3 { grid-column: span 12; }
+}
+
 /* الهيدر */
 header {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
@@ -43,7 +69,7 @@ header {
 .header-content {
     display: flex;
     flex-direction: column;
-    margin-bottom: 15px;
+    justify-content: center;
 }
 
 .header-content h1 {
@@ -64,6 +90,8 @@ header {
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 /* الأزرار */
@@ -191,19 +219,19 @@ nav {
 }
 
 .banner-card i {
-    font-size: 2.5rem;
+    font-size: 2rem;
     color: var(--secondary-color);
 }
 
-.banner-card h3 {
-    font-size: 1.8rem;
+.banner-card h5 {
+    font-size: 1rem;
     color: var(--primary-color);
     margin-bottom: 5px;
 }
 
 .banner-card p {
     color: var(--gray-color);
-    font-size: 0.9rem;
+    font-size: 0.7rem;
 }
 
 /* الأقسام */
@@ -440,8 +468,9 @@ nav {
 
 .reports-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 20px;
+    margin-top: 20px;
 }
 
 .report-card {
@@ -836,9 +865,9 @@ footer p {
 
 .modal-content {
     background-color: white;
-    margin: 20px auto;
-    width: 95%;
-    max-width: 1100px;
+    margin: 15px auto;
+    width: 97%;
+    max-width: 1300px;
     border-radius: var(--border-radius);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     animation: modalFade 0.3s;
@@ -874,8 +903,8 @@ footer p {
 }
 
 .modal-body {
-    padding: 30px;
-    max-height: 75vh;
+    padding: 35px;
+    max-height: 85vh;
     overflow-y: auto;
     background-color: #fafafa;
 }
@@ -898,27 +927,83 @@ footer p {
         display: none !important;
     }
     
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    
     .modal-content {
         position: static;
         width: 100%;
         margin: 0;
         box-shadow: none;
         max-width: 100%;
+        padding: 0;
     }
     
     .modal-header {
         background: #2c3e50;
         color: black;
-        padding: 15px;
+        padding: 20px;
         margin-bottom: 20px;
+        page-break-inside: avoid;
     }
     
     .modal-body {
-        max-height: 100%;
-        overflow: visible;
-        padding: 20px 0;
+        max-height: none !important;
+        overflow: visible !important;
+        padding: 20px;
         background: white;
     }
+    
+    .card, .report-card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        page-break-inside: avoid;
+    }
+    
+    .member-report-card {
+        page-break-inside: avoid;
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        padding: 18px;
+        margin-bottom: 18px;
+    }
+    
+    .report-header-info {
+        background: white;
+        color: black;
+        border: 2px solid #2c3e50;
+        page-break-inside: avoid;
+        margin-bottom: 20px;
+    }
+    
+    .report-modal-view {
+        page-break-inside: avoid;
+    }
+    
+    .members-report-container {
+        max-height: none !important;
+        overflow: visible !important;
+        padding: 0 !important;
+    }
+    
+    .dashboard-banner {
+        page-break-after: always;
+    }
+    
+    .performance-card {
+        page-break-inside: avoid;
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+    }
+    
+    .report-meta-info {
+        background: none !important;
+        color: black !important;
+        border: 1px solid #ddd;
+    }
+}
     
     .card, .report-card {
         box-shadow: none !important;
@@ -1186,13 +1271,13 @@ footer p {
 .member-report-card {
     background-color: white;
     border-radius: 10px;
-    padding: 25px;
+    padding: 28px;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     border-right: 5px solid #3498db;
     transition: transform 0.3s ease;
-    margin-bottom: 20px;
-    font-size: 1.05rem;
-    line-height: 1.8;
+    margin-bottom: 22px;
+    font-size: 0.95rem;
+    line-height: 1.7;
 }
 
 .member-report-card:hover {
@@ -1231,7 +1316,7 @@ footer p {
 }
 
 .member-report-name {
-    font-size: 1.6rem;
+    font-size: 1.35rem;
     font-weight: bold;
     color: #2c3e50;
     display: flex;
@@ -1307,28 +1392,28 @@ footer p {
 
 .description-title {
     color: #2c3e50;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 600;
 }
 
 .description-content {
-    padding: 12px;
+    padding: 10px;
     background-color: white;
     border-radius: 5px;
 }
 
 .description-line {
-    padding: 12px;
-    margin-bottom: 8px;
+    padding: 10px;
+    margin-bottom: 6px;
     border-right: 2px solid #e0e0e0;
     background-color: #fefefe;
     border-radius: 3px;
-    font-size: 1rem;
-    line-height: 1.7;
+    font-size: 0.9rem;
+    line-height: 1.6;
 }
 
 .description-line:last-child {

@@ -12,12 +12,12 @@
 
 <body>
     <header>
-        <div class="container">
-            <div class="header-content">
+        <div class="container grid">
+            <div class="header-content col-6">
                 <h1><i class="fas fa-chart-line"></i> نظام التقارير اليومية</h1>
                 <p class="subtitle">إدارة وتتبع التقييم اليومي للفريق</p>
             </div>
-            <div class="header-actions">
+            <div class="header-actions col-6">
                 <button class="btn-primary" onclick="window.location.href='reports/report-template.html'">
                     <i class="fas fa-plus-circle"></i> إنشاء تقرير جديد
                 </button>
@@ -31,8 +31,9 @@
     <nav>
         <div class="container">
             <ul class="nav-links">
-                <li><a href="#overview" class="active"><i class="fas fa-chart-pie"></i> نظرة عامة</a></li>
-                <li><a href="#reports"><i class="fas fa-file-alt"></i> التقارير</a></li>
+                <li><a href="#reports" class="active"><i class="fas fa-file-alt"></i> التقارير</a></li>
+                <li><a href="#overview"><i class="fas fa-chart-pie"></i> نظرة عامة</a></li>
+
                 <li><a href="#archive"><i class="fas fa-archive"></i> الأرشيف</a></li>
                 <li><a href="#statistics"><i class="fas fa-chart-bar"></i> الإحصائيات</a></li>
             </ul>
@@ -45,28 +46,28 @@
             <div class="banner-card">
                 <i class="fas fa-calendar-alt"></i>
                 <div>
-                    <h3 id="current-date">--/--/----</h3>
+                    <h5 id="current-date">--/--/----</h5>
                     <p>تاريخ اليوم</p>
                 </div>
             </div>
             <div class="banner-card">
                 <i class="fas fa-file-contract"></i>
                 <div>
-                    <h3 id="total-reports">0</h3>
+                    <h5 id="total-reports">0</h5>
                     <p>عدد التقارير</p>
                 </div>
             </div>
             <div class="banner-card">
                 <i class="fas fa-users"></i>
                 <div>
-                    <h3 id="team-members">5</h3>
+                    <h5 id="team-members">5</h5>
                     <p>أعضاء الفريق</p>
                 </div>
             </div>
             <div class="banner-card">
                 <i class="fas fa-star"></i>
                 <div>
-                    <h3 id="avg-rating">0.0</h3>
+                    <h5 id="avg-rating">0.0</h5>
                     <p>متوسط التقييم</p>
                 </div>
             </div>
@@ -169,7 +170,7 @@
         <div class="container">
             <p>نظام التقارير اليومية &copy; <span id="current-year"></span> - تم التطوير بواسطة Static Reporting System
             </p>
-            <p class="footer-info">لا يتطلب قاعدة بيانات - يعمل على أي متصفح</p>
+            <p class="footer-info"> </p>
         </div>
     </footer>
 
@@ -183,14 +184,12 @@
             <div class="modal-body" id="modal-body">
                 <!-- محتوى التقرير -->
             </div>
-            <div class="modal-footer">
-                <button class="btn-json" onclick="exportCurrentReportAsJSON()">
-                    <i class="fas fa-file-export"></i> تصدير JSON
-                </button>
+            <!-- <div class="modal-footer">
+                
                 <button class="btn-secondary" onclick="printReport()">
                     <i class="fas fa-print"></i> طباعة / PDF
                 </button>
-            </div>
+            </div> -->
         </div>
     </div>
 
@@ -455,6 +454,52 @@
                     "  سبب  نسبه  مشروع  الكاميرات  الاضافات  اللي  بتزيد  كل  مره  نعرض  فيها  الرن  "
                 ]
             },
+             {
+                "date": "2026-02-10",
+                "members": {
+                    "نادر": {
+                        "rating": 5,
+                        "description": [
+                            "اشتغل  علي  جزء  عرض  الصور  في  شكل  grid  بدل  slider   عشان  ده  كان  بياخد  وقت  ومجهود  في  انه يحدد  كل  واحد  لوحده",
+                            " بعد  مخلص  الجزء  دا  لقي  في  ايرور  ان  الداتا  مش  بتسمع  في  ui   بعد التعديل  "
+                            
+                        ]
+                    },
+                    "وليد": {
+                        "rating": 5,
+                        "description": [
+                            "كان  عندهم  حصر  ",
+                            " عمل  الجزء  بتاع  الميل  خلصه  ",
+                            " جهز  الفرنت  لمحمد  يعدل  عليه  "
+                        ]
+                    },
+                    "أحمد": {
+                        "rating": 0,
+                        "description": ["شغال مع تيم الدراسات"]
+                    },
+                    "محمد": {
+                        "rating": 5,
+                        "description": [
+                            " كان  في  الحصر  ",
+                            " راجع  مع  وليد   الجزء اللي هيشتغل   عليه     ",
+                            "خلص  الجزء  بتاع  فايل   الشركه    والتعديلات  "
+                        ]
+                    },
+                    "لمياء": {
+                        "rating": 5,
+                        "description": [
+                            "1- مراجعه  التعديلات  مع  وليد  ومحمد  ", 
+                            "2- تعديل  landing  Page   بتاعه  مشروع  الكاميرات  ومشروع  النقل    ",
+                            "3-  البدء  في  تقرير  اكتشاف  السوق   الي  مشروع  اللوجستيك "
+                        ]
+                    }
+                },
+                "notes": [
+
+                    
+                    ]
+            },
+
              
             
          ];
@@ -913,13 +958,81 @@
         }
 
         function setupSearchAndFilter() {
-            // تنفيذ بسيط
+            // تنفيذ البحث والتصفية
             const searchInput = document.getElementById('search-reports');
+            const dateInput = document.getElementById('report-date');
+            
             if (searchInput) {
-                searchInput.addEventListener('keyup', function () {
-                    console.log('بحث:', this.value);
-                });
+                searchInput.addEventListener('keyup', searchReports);
             }
+            if (dateInput) {
+                dateInput.addEventListener('change', filterReportsByDate);
+            }
+        }
+
+        // دالة تصفية التقارير حسب التاريخ
+        function filterReportsByDate() {
+            const dateInput = document.getElementById('report-date').value;
+            const searchInput = document.getElementById('search-reports').value;
+            
+            if (!dateInput) {
+                // إذا لم يختر تاريخ، عرض آخر 5 تقارير
+                displayReports();
+                return;
+            }
+            
+            const filtered = reportsData.filter(report => report.date === dateInput);
+            
+            if (filtered.length === 0) {
+                reportsContainerEl.innerHTML = '<p class="no-data">لا توجد تقارير في هذا التاريخ</p>';
+                return;
+            }
+            
+            reportsContainerEl.innerHTML = '';
+            filtered.forEach(report => {
+                const reportCard = createReportCard(report);
+                reportsContainerEl.appendChild(reportCard);
+            });
+        }
+
+        // دالة البحث في التقارير
+        function searchReports() {
+            const searchTerm = document.getElementById('search-reports').value.toLowerCase();
+            
+            if (!searchTerm) {
+                // إذا لم يكن هناك بحث، عرض جميع التقارير
+                displayReports();
+                return;
+            }
+            
+            const filtered = reportsData.filter(report => {
+                // البحث في أسماء الأعضاء والأوصاف
+                const membersMatch = Object.entries(report.members).some(([member, data]) => {
+                    const memberNameMatch = member.toLowerCase().includes(searchTerm);
+                    const descriptionMatch = Array.isArray(data.description) 
+                        ? data.description.some(line => line.toLowerCase().includes(searchTerm))
+                        : (data.description && data.description.toLowerCase().includes(searchTerm));
+                    return memberNameMatch || descriptionMatch;
+                });
+                
+                // البحث في الملاحظات
+                const notesMatch = report.notes && report.notes.some(note => 
+                    note.toLowerCase().includes(searchTerm)
+                );
+                
+                return membersMatch || notesMatch;
+            });
+            
+            if (filtered.length === 0) {
+                reportsContainerEl.innerHTML = '<p class="no-data">لا توجد تقارير تطابق البحث</p>';
+                return;
+            }
+            
+            reportsContainerEl.innerHTML = '';
+            filtered.forEach(report => {
+                const reportCard = createReportCard(report);
+                reportsContainerEl.appendChild(reportCard);
+            });
         }
 
         // دالات مساعدة
