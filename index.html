@@ -71,6 +71,24 @@
                 </div>
             </div>
         </section>
+         <!-- آخر تقرير -->
+        <section id="reports" class="section">
+            <h2><i class="fas fa-file-alt"></i> آخر التقارير</h2>
+            <div class="reports-header">
+                <div class="date-filter">
+                    <label for="report-date"><i class="fas fa-calendar"></i> اختر تاريخ:</label>
+                    <input type="date" id="report-date" onchange="filterReportsByDate()">
+                </div>
+                <div class="search-box">
+                    <input type="text" id="search-reports" placeholder="ابحث في التقارير..." onkeyup="searchReports()">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+
+            <div class="reports-container" id="reports-container">
+                <!-- سيتم ملؤها بالجافاسكريبت -->
+            </div>
+        </section>
 
         <!-- نظرة عامة -->
         <section id="overview" class="section">
@@ -95,24 +113,7 @@
             </div>
         </section>
 
-        <!-- آخر تقرير -->
-        <section id="reports" class="section">
-            <h2><i class="fas fa-file-alt"></i> آخر التقارير</h2>
-            <div class="reports-header">
-                <div class="date-filter">
-                    <label for="report-date"><i class="fas fa-calendar"></i> اختر تاريخ:</label>
-                    <input type="date" id="report-date" onchange="filterReportsByDate()">
-                </div>
-                <div class="search-box">
-                    <input type="text" id="search-reports" placeholder="ابحث في التقارير..." onkeyup="searchReports()">
-                    <i class="fas fa-search"></i>
-                </div>
-            </div>
-
-            <div class="reports-container" id="reports-container">
-                <!-- سيتم ملؤها بالجافاسكريبت -->
-            </div>
-        </section>
+       
 
         <!-- الأرشيف -->
         <section id="archive" class="section">
@@ -146,7 +147,7 @@
                         <!-- سيتم ملؤها بالجافاسكريبت -->
                     </div>
                 </div>
-                <div class="card">
+                <!-- <div class="card">
                     <h3><i class="fas fa-download"></i> تصدير البيانات</h3>
                     <div class="export-options">
                         <button class="btn-export" onclick="exportToJSON()">
@@ -159,7 +160,7 @@
                             <i class="fas fa-print"></i> طباعة التقرير
                         </button>
                     </div>
-                </div>
+                </div> -->
             </div>
         </section>
     </main>
@@ -183,14 +184,11 @@
                 <!-- محتوى التقرير -->
             </div>
             <div class="modal-footer">
-                <button class="btn-primary" onclick="openReport()">
-                    <i class="fas fa-external-link-alt"></i> فتح التقرير الكامل
-                </button>
                 <button class="btn-json" onclick="exportCurrentReportAsJSON()">
                     <i class="fas fa-file-export"></i> تصدير JSON
                 </button>
                 <button class="btn-secondary" onclick="printReport()">
-                    <i class="fas fa-print"></i> طباعة
+                    <i class="fas fa-print"></i> طباعة / PDF
                 </button>
             </div>
         </div>
@@ -247,6 +245,67 @@
                 ]
             }, 
             {
+                "date": "2026-02-07",
+                "members": {
+                    "نادر": {
+                        "rating": 5,
+                        "description": [
+                            "   خلص 5 تعديلات  من  اصل  7  اللي  الدكتور  قال  عليهم  ",
+                            "التعديلات  هي   ",
+                            "1- user  choose number of  frames  to  process  in  the  video   ",
+                            "2-  translate  section  that writen by Arabic  to  English    ",
+                            "3-  Change the question format in the form " ,
+                            "4- change the word  (prority )  to  (objective)  in the form ",
+                            "5- sort the  results  "
+                        ]
+                    },
+                    "وليد": {
+                        "rating": 5,
+                        "description": [
+                            "  شغال  علي  اضافه  الاميل   الي  الخدمه  ",
+                            " اضافه   بروفايل   للشركه  الشحن  ",
+                            " اشتغل  علي  جزء  الميل   "
+                        
+                            ]
+                    },
+                    "أحمد": {
+                        "rating": 0,
+                        "description": ["شغال مع تيم الدراسات"]
+
+                    },
+                    "محمد": {
+                        "rating": 5,
+                        "description": [
+
+                            "خلص كل  التعديلات    المطلوبه  النهارده  اللي    هي  5 من  اصل  7  اللي  الدكتور  قال  عليهم",
+                            "التعديلات  هي   ",
+                            "1- review   for  form  before  sending  it    ",
+                            "2-  جزء  التغليف  والتفكيك   والنقل   ",
+                            "3- not  display  the  name  of  company  ",
+                            "4- location  of  start  dont  show in  options  of  the  locations of  End    ",
+                            "5-  change  the  ETA  of  Date",
+                        ]
+                    },
+                    "لمياء": {
+                        "rating": 5,
+                        "description": [
+                            "  ميتنج  كع  الدكتور  لمناقشه  المهام  الاسبوع  الجديده  ",
+                            "  ميتنج  كع  الدكتور  ونادر   لمناقشه  تعديلات  مشروع  الكاميرات والاضافات   التي  يجب  اضافاتها    ",
+                            "ميتنج  مع   الدكتور  وبشمهندس   وليد  وبشمهندس  محمد  لمناقشه  تعديلات  مشروع  النقل  والاضافات   التي  يجب  اضافاتها    ",
+                            "تنظيم  الشغل  والتسكات  المطلوبه  من  وليد  ومحمد  ونادر  بعد  الميتنج  "
+
+
+                            
+                           ]
+                    }
+                },
+                "notes": [
+
+                    " يوم السبت  كا  المعتاد  بيكون  عباره  عن  مناقشات  مع  الدكتور   لمراجعه التسكات   والجديد  كل  اسبوع   ",
+                    
+                ]
+            },
+            {
                 "date": "2026-02-08",
                 "members": {
                     "نادر": {
@@ -262,11 +321,11 @@
                         ]
                     },
                     "وليد": {
-                        "rating": 4,
+                        "rating": 5,
                         "description": [
                             "  شغال  علي  اضافه  الاميل   الي  الخدمه  ",
                             " اضافه   بروفايل   للشركه  الشحن  ",
-                            " لسه  هيكمل  شغل  النهارده  "
+                            " اشتغل  علي  جزء  الميل   "
                         
                             ]
                     },
@@ -305,8 +364,100 @@
                     " 75%  ( الديزاين )  + من  موقع  النقل       (الكود ",
                     " 35%  ( الديزاين )  + من         (الكود landing Page",
                 ]
-            }
-               ];
+            },
+            
+            {
+                "date": "2026-02-9",
+                "members": {
+                    "نادر": {
+                        "rating": 5,
+                        "description": [
+                             "ضاف فالصفحة زر بيفتح مودل  للي فيه  مشكله  اللي  مش  واثق في  العد بتاعتها ",
+                            "  الاول  عمل  اسليدر  يعض  فيه  صوره  صوره   وبعدين   دي بتاخد وقت  ومجهود  في  انه يحدد  كل  واحد  لوحده  ",
+                            " اشتغل  علي  فكره   تانيه   انه  يعمل  بدال  slider   يعمل   grid  "
+                        ]
+                    },
+                    "وليد": {
+                        "rating": 0,
+                        "description": [
+                            "كان  عندهم  حصر  ",
+                            " كان  عنده  مشوار  بين  فتره  الحصر   ",
+                            
+                        ]
+                    },
+                    "أحمد": {
+                        "rating": 0,
+                        "description": ["شغال مع تيم الدراسات"]
+                    },
+                    "محمد": {
+                        "rating": 2,
+                        "description": [
+                            " كان  في  الحصر  ",
+                            " عمل  جزء  بسيط  جدا  في  الديزاين ",
+                            
+                        ]
+                    },
+                    "لمياء": {
+                        "rating": 5,
+                        "description": [
+                            "1- تعديل  landing  Page   بتاعه  مشروع  الكاميرات  ومشروع  النقل    ",
+                        ]
+                    }
+                },
+                "notes": [
+                    "الانجاز  اليوم  ضاع  في  الحصر  وعدم ترتيب  الشغل  وعدم التواجد  مع بعض  "
+                   ]
+            }, 
+
+            {
+                "date": "2026-02-10",
+                "members": {
+                    "نادر": {
+                        "rating": 5,
+                        "description": [
+                            "اشتغل  علي  جزء  عرض  الصور  في  شكل  grid  بدل  slider   عشان  ده  كان  بياخد  وقت  ومجهود  في  انه يحدد  كل  واحد  لوحده",
+                            " بعد  مخلص  الجزء  دا  لقي  في  ايرور  ان  الداتا  مش  بتسمع  في  ui   بعد التعديل  "
+                            
+                        ]
+                    },
+                    "وليد": {
+                        "rating": 5,
+                        "description": [
+                            "كان  عندهم  حصر  ",
+                            " عمل  الجزء  بتاع  الميل  خلصه  ",
+                            " جهز  الفرنت  لمحمد  يعدل  عليه  "
+                        ]
+                    },
+                    "أحمد": {
+                        "rating": 0,
+                        "description": ["شغال مع تيم الدراسات"]
+                    },
+                    "محمد": {
+                        "rating": 5,
+                        "description": [
+                            " كان  في  الحصر  ",
+                            " راجع  مع  وليد   الجزء اللي هيشتغل   عليه     ",
+                            "خلص  الجزء  بتاع  فايل   الشركه    والتعديلات  "
+                        ]
+                    },
+                    "لمياء": {
+                        "rating": 5,
+                        "description": [
+                            "1- مراجعه  التعديلات  مع  وليد  ومحمد  ", 
+                            "2- تعديل  landing  Page   بتاعه  مشروع  الكاميرات  ومشروع  النقل    ",
+                            "3-  البدء  في  تقرير  اكتشاف  السوق   الي  مشروع  اللوجستيك "
+                        ]
+                    }
+                },
+                "notes": [
+                    "تم الانهاء من موقع الويب اللي شغال عليه وليد بنسبه   95% ",
+                    " مشروع  الكاميرات  تم  الانتهاء  منه  بنسبه  80%   ",
+                    "  سبب  نسبه  مشروع  الكاميرات  الاضافات  اللي  بتزيد  كل  مره  نعرض  فيها  الرن  "
+                ]
+            },
+             
+            
+         ];
 
         // تعطيل دالة loadReports القديمة واستخدام البيانات المضمنة
         console.log("🚀 استخدام البيانات المضمنة مباشرة");
@@ -805,7 +956,20 @@
         }
 
         function exportCurrentReportAsJSON() {
-            alert('تصدير التقرير الحالي قيد التطوير');
+            const modal = document.getElementById('report-modal');
+            const reportDate = modal.dataset.reportDate;
+            const report = reportsData.find(r => r.date === reportDate);
+            
+            if (report) {
+                const dataStr = JSON.stringify(report, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', `report-${reportDate}.json`);
+                linkElement.click();
+            } else {
+                alert('خطأ: لم يتم العثور على التقرير');
+            }
         }
 
         function openReport() {

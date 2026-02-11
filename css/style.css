@@ -836,9 +836,9 @@ footer p {
 
 .modal-content {
     background-color: white;
-    margin: 50px auto;
-    width: 90%;
-    max-width: 800px;
+    margin: 20px auto;
+    width: 95%;
+    max-width: 1100px;
     border-radius: var(--border-radius);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     animation: modalFade 0.3s;
@@ -874,9 +874,10 @@ footer p {
 }
 
 .modal-body {
-    padding: 25px;
-    max-height: 60vh;
+    padding: 30px;
+    max-height: 75vh;
     overflow-y: auto;
+    background-color: #fafafa;
 }
 
 .modal-footer {
@@ -893,13 +894,50 @@ footer p {
     nav, button, .header-actions, 
     .reports-header, .year-selector,
     .export-options, footer,
-    .modal-footer, .no-print {
+    .modal-footer, .no-print, .modal {
         display: none !important;
+    }
+    
+    .modal-content {
+        position: static;
+        width: 100%;
+        margin: 0;
+        box-shadow: none;
+        max-width: 100%;
+    }
+    
+    .modal-header {
+        background: #2c3e50;
+        color: black;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .modal-body {
+        max-height: 100%;
+        overflow: visible;
+        padding: 20px 0;
+        background: white;
     }
     
     .card, .report-card {
         box-shadow: none !important;
         border: 1px solid #ddd !important;
+        page-break-inside: avoid;
+    }
+    
+    .member-report-card {
+        page-break-inside: avoid;
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .report-header-info {
+        background: white;
+        color: black;
+        border: 2px solid #2c3e50;
         page-break-inside: avoid;
     }
     
@@ -1148,10 +1186,13 @@ footer p {
 .member-report-card {
     background-color: white;
     border-radius: 10px;
-    padding: 20px;
+    padding: 25px;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     border-right: 5px solid #3498db;
     transition: transform 0.3s ease;
+    margin-bottom: 20px;
+    font-size: 1.05rem;
+    line-height: 1.8;
 }
 
 .member-report-card:hover {
@@ -1190,7 +1231,7 @@ footer p {
 }
 
 .member-report-name {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     font-weight: bold;
     color: #2c3e50;
     display: flex;
@@ -1266,25 +1307,28 @@ footer p {
 
 .description-title {
     color: #2c3e50;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
 }
 
 .description-content {
-    padding: 10px;
+    padding: 12px;
     background-color: white;
     border-radius: 5px;
 }
 
 .description-line {
-    padding: 8px 10px;
-    margin-bottom: 5px;
+    padding: 12px;
+    margin-bottom: 8px;
     border-right: 2px solid #e0e0e0;
     background-color: #fefefe;
     border-radius: 3px;
+    font-size: 1rem;
+    line-height: 1.7;
 }
 
 .description-line:last-child {
