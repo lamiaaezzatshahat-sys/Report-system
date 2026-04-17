@@ -586,6 +586,302 @@ function getPerformanceLevel(rating) {
 // بقية الدوال تبقى كما هي مع تعديلات طفيفة
 // ... [بقية الدوال من الكود السابق] ...
 
+// ============================================
+// تنفيذ الدوال المفقودة
+// ============================================
+
+// دالة عرض التقارير
+function displayReports() {
+    if (reportsData.length === 0) {
+        reportsContainerEl.innerHTML = '<p class="no-data">لا توجد تقارير حاليًا</p>';
+        return;
+    }
+    
+    // ترتيب التقارير من الأحدث إلى الأقدم
+    const sortedReports = [...reportsData].sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    reportsContainerEl.innerHTML = '';
+    
+    sortedReports.forEach(report => {
+        const card = createReportCard(report);
+        reportsContainerEl.appendChild(card);
+    });
+}
+
+// دالة عرض الأرشيف
+function displayArchive() {
+    if (reportsData.length === 0) {
+        reportsArchiveEl.innerHTML = '<p class="no-data">لا توجد تقارير في الأرشيف</p>';
+        return;
+    }
+    
+    // جمع السنوات من التقارير
+    const years = new Set();
+    reportsData.forEach(report => {
+        const year = new Date(report.date).getFullYear();
+        years.add(year);
+    });
+    
+    // عرض أزرار السنوات
+    yearButtonsEl.innerHTML = '';
+    const sortedYears = Array.from(years).sort((a, b) => b - a);
+    
+    sortedYears.forEach((year, index) => {
+        const btn = document.createElement('button');
+        btn.className = `year-btn ${index === 0 ? 'active' : ''}`;
+        btn.textContent = year;
+        btn.onclick = () => filterArchiveByYear(year);
+        yearButtonsEl.appendChild(btn);
+    });
+    
+    // عرض التقارير من السنة الحالية
+    if (sortedYears.length > 0) {
+        filterArchiveByYear(sortedYears[0]);
+    }
+}
+
+// دالة تصفية الأرشيف حسب السنة
+function filterArchiveByYear(year) {
+    // تحديث الزر النشط
+    document.querySelectorAll('.year-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (parseInt(btn.textContent) === year) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // تصفية التقارير
+    const filteredReports = reportsData.filter(report => {
+        const reportYear = new Date(report.date).getFullYear();
+        return reportYear === year;
+    });
+    
+    // عرض التقارير المصفاة
+    reportsArchiveEl.innerHTML = '';
+    
+    if (filteredReports.length === 0) {
+        reportsArchiveEl.innerHTML = '<p class="no-data">لا توجد تقارير لهذه السنة</p>';
+        return;
+    }
+    
+    filteredReports.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(report => {
+        const reportDate = new Date(report.date);
+        const formattedDate = reportDate.toLocaleDateString('ar-SA', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        
+        const archiveItem = document.createElement('div');
+        archiveItem.className = 'archive-item';
+        archiveItem.innerHTML = `
+            <span class="archive-date">${formattedDate}</span>
+            <div class="archive-actions">
+                <button class="btn-primary" onclick="viewReport('${report.date}')" title="عرض التقرير">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-secondary" onclick="printReportCard('${report.date}')" title="طباعة">
+                    <i class="fas fa-print"></i>
+                </button>
+            </div>
+        `;
+        reportsArchiveEl.appendChild(archiveItem);
+    });
+}
+
+// دالة تحديث الإحصائيات
+function updateStatistics() {
+    if (reportsData.length === 0) {
+        document.getElementById('top-performers').innerHTML = '<p class="no-data">لا توجد بيانات</p>';
+        document.getElementById('activity-days').innerHTML = '<p class="no-data">لا توجد بيانات</p>';
+        return;
+    }
+    
+    // أعضاء الأعلى تقييما
+    const memberStats = {};
+    reportsData.forEach(report => {
+        Object.entries(report.members).forEach(([member, data]) => {
+            if (!memberStats[member]) {
+                memberStats[member] = [];
+            }
+            const rating = getMemberRating(data);
+            if (rating > 0) {
+                memberStats[member].push(rating);
+            }
+        });
+    });
+    
+    // حساب المتوسطات والترتيب
+    const sortedMembers = Object.entries(memberStats)
+        .map(([name, ratings]) => ({
+            name,
+            avg: ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0,
+            count: ratings.length
+        }))
+        .filter(m => m.avg > 0)
+        .sort((a, b) => b.avg - a.avg)
+        .slice(0, 5);
+    
+    // عرض أعضاء الأعلى تقييما
+    const topPerformersEl = document.getElementById('top-performers');
+    if (sortedMembers.length === 0) {
+        topPerformersEl.innerHTML = '<p class="no-data">لا توجد بيانات</p>';
+    } else {
+        topPerformersEl.innerHTML = sortedMembers.map(member => `
+            <div class="activity-metric">
+                <div><strong>${member.name}</strong></div>
+                <div class="metric-value">${member.avg.toFixed(2)}/5</div>
+                <div class="metric-label">${member.count} تقييم</div>
+            </div>
+        `).join('');
+    }
+    
+    // أيام النشاط
+    const activityDays = new Map();
+    reportsData.forEach(report => {
+        const reportDate = new Date(report.date);
+        const dayName = reportDate.toLocaleDateString('ar-SA', { weekday: 'long' });
+        activityDays.set(dayName, (activityDays.get(dayName) || 0) + 1);
+    });
+    
+    // ترتيب أيام الأسبوع
+    const dayOrder = ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
+    const sortedDays = Array.from(activityDays.entries())
+        .sort((a, b) => dayOrder.indexOf(a[0]) - dayOrder.indexOf(b[0]));
+    
+    // عرض أيام النشاط
+    const activityDaysEl = document.getElementById('activity-days');
+    if (sortedDays.length === 0) {
+        activityDaysEl.innerHTML = '<p class="no-data">لا توجد بيانات</p>';
+    } else {
+        activityDaysEl.innerHTML = sortedDays.map(([day, count]) => `
+            <div class="activity-metric">
+                <div><strong>${day}</strong></div>
+                <div class="metric-value">${count}</div>
+                <div class="metric-label">تقارير</div>
+            </div>
+        `).join('');
+    }
+}
+
+// دالة التنقل الناعم
+function setupSmoothScrolling() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', (e) => {
+            const href = anchor.getAttribute('href');
+            if (href !== '#' && href.length > 1) {
+                e.preventDefault();
+                const targetEl = document.querySelector(href);
+                if (targetEl) {
+                    setTimeout(() => {
+                        targetEl.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                }
+            }
+        });
+    });
+}
+
+// دالة إعداد البحث والتصفية
+function setupSearchAndFilter() {
+    // سيتم تحديثها عند كتابة المستخدم
+}
+
+// دالة البحث في التقارير
+function searchReports() {
+    const searchTerm = document.getElementById('search-reports').value.toLowerCase();
+    const cards = document.querySelectorAll('.report-card');
+    
+    cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+}
+
+// دالة تصفية التقارير حسب التاريخ
+function filterReportsByDate() {
+    const selectedDate = document.getElementById('report-date').value;
+    const cards = document.querySelectorAll('.report-card');
+    
+    if (!selectedDate) {
+        cards.forEach(card => card.style.display = '');
+        return;
+    }
+    
+    cards.forEach(card => {
+        const reportDate = card.querySelector('.report-date').textContent;
+        card.style.display = reportDate.includes(new Date(selectedDate).toLocaleDateString('ar-SA')) ? '' : 'none';
+    });
+}
+
+// دالة طباعة بطاقة التقرير
+function printReportCard(date) {
+    const report = reportsData.find(r => r.date === date);
+    if (!report) {
+        alert('التقرير غير موجود');
+        return;
+    }
+    
+    viewReport(date);
+    setTimeout(() => {
+        window.print();
+    }, 500);
+}
+
+// دالة الحصول على اسم اليوم
+function getDayName(dayIndex) {
+    const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    return days[dayIndex];
+}
+
+// دالة تهيئة المخطط
+function initializeChart() {
+    const ctx = document.getElementById('monthlyChart');
+    if (!ctx) return;
+    
+    // سيتم تحميل Chart.js إذا لزم الأمر
+    // يمكنك إضافة مكتبة Chart.js للحصول على رسوم بيانية متقدمة
+}
+
+// ============================================
+// عرض آخر تقرير تلقائيا عند تحميل الصفحة
+// ============================================
+
+// إضافة دالة لعرض آخر تقرير
+function displayLatestReport() {
+    if (reportsData.length === 0) {
+        console.log('لا توجد تقارير لعرضها');
+        return;
+    }
+    
+    // الحصول على أحدث تقرير
+    const latestReport = reportsData.reduce((latest, current) => {
+        return new Date(current.date) > new Date(latest.date) ? current : latest;
+    });
+    
+    // عرض التقرير تلقائيا في المودال
+    viewReport(latestReport.date);
+    
+    // التمرير إلى قسم التقارير
+    setTimeout(() => {
+        const reportsSection = document.getElementById('reports');
+        if (reportsSection) {
+            reportsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, 1000);
+}
+
+// تعديل دالة loadReports لعرض آخر تقرير
+const originalLoadReports = window.loadReports || loadReports;
+loadReports = async function() {
+    await originalLoadReports();
+    // عرض آخر تقرير بعد تحميل البيانات
+    if (reportsData.length > 0) {
+        setTimeout(displayLatestReport, 500);
+    }
+};
+
 // في نهاية الملف، أضف أنماط CSS للمودال
 document.head.insertAdjacentHTML('beforeend', `
 <style>
@@ -614,5 +910,62 @@ document.head.insertAdjacentHTML('beforeend', `
     .rating-bar-container.no-rating {
         background-color: #f5f5f5;
     }
+    
+    /* تحسينات الإحصائيات */
+    .stats-card {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    
+    .stats-card:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        transform: translateY(-5px);
+    }
+    
+    .stats-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+    }
+    
+    @media (max-width: 768px) {
+        .stats-content {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .stats-content {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+    }
 </style>
 `);
+
+// ============================================
+// دوال إضافية مساعدة
+// ============================================
+
+// دالة إغلاق المودال
+function closeModal() {
+    const modal = document.getElementById('report-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// إغلاق المودال عند النقر خارجه
+window.onclick = function(event) {
+    const modal = document.getElementById('report-modal');
+    if (modal && event.target === modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// دالة طباعة النظرة العامة
+function printOverview() {
+    window.print();
+}
