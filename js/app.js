@@ -341,6 +341,7 @@ function createReportCard(report) {
     
     const card = document.createElement('div');
     card.className = 'report-card';
+    card.dataset.reportDate = report.date; // إضافة التاريخ الأصلي كـ data attribute
     
     // عدد الأعضاء الذين لديهم تقييم
     const membersWithValidRating = Object.values(report.members).filter(member => getMemberRating(member) > 0).length;
@@ -785,34 +786,78 @@ function setupSmoothScrolling() {
 
 // دالة إعداد البحث والتصفية
 function setupSearchAndFilter() {
-    // سيتم تحديثها عند كتابة المستخدم
-}
-
-// دالة البحث في التقارير
-function searchReports() {
-    const searchTerm = document.getElementById('search-reports').value.toLowerCase();
-    const cards = document.querySelectorAll('.report-card');
+    // إعداد عناصر الفلتر
+    const searchInput = document.getElementById('search-reports');
+    const dateInput = document.getElementById('report-date');
     
-    cards.forEach(card => {
-        const text = card.textContent.toLowerCase();
-        card.style.display = text.includes(searchTerm) ? '' : 'none';
-    });
-}
-
-// دالة تصفية التقارير حسب التاريخ
-function filterReportsByDate() {
-    const selectedDate = document.getElementById('report-date').value;
-    const cards = document.querySelectorAll('.report-card');
-    
-    if (!selectedDate) {
-        cards.forEach(card => card.style.display = '');
-        return;
+    if (searchInput) {
+        searchInput.addEventListener('input', applyFiltersAndSearch);
     }
+    if (dateInput) {
+        dateInput.addEventListener('change', applyFiltersAndSearch);
+    }
+}
+
+// دالة مشتركة تدمج البحث والفلتر بالتاريخ
+function applyFiltersAndSearch() {
+    const searchTerm = document.getElementById('search-reports').value.toLowerCase();
+    const selectedDate = document.getElementById('report-date').value; // بصيغة YYYY-MM-DD
+    const cards = document.querySelectorAll('.report-card');
+    let visibleCount = 0;
     
     cards.forEach(card => {
-        const reportDate = card.querySelector('.report-date').textContent;
-        card.style.display = reportDate.includes(new Date(selectedDate).toLocaleDateString('ar-SA')) ? '' : 'none';
+        let matchesSearch = true;
+        let matchesDate = true;
+        
+        // فحص البحث
+        if (searchTerm) {
+            const text = card.textContent.toLowerCase();
+            matchesSearch = text.includes(searchTerm);
+        }
+        
+        // فحص التاريخ - مقارنة مباشرة
+        if (selectedDate) {
+            const reportDate = card.dataset.reportDate; // التاريخ الأصلي (YYYY-MM-DD)
+            // مقارنة مباشرة للتاريخ بصيغة ISO
+            matchesDate = (reportDate === selectedDate);
+        }
+        
+        // إظهار أو إخفاء الكارتة بناءً على كلا الشرطين
+        const shouldShow = matchesSearch && matchesDate;
+        if (shouldShow) {
+            card.style.display = '';
+            card.style.animation = 'fadeIn 0.3s ease';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
     });
+    
+    // عرض رسالة إذا لم يتم العثور على نتائج
+    const container = document.getElementById('reports-container');
+    let emptyMessage = container.querySelector('.no-results-message');
+    
+    if (visibleCount === 0 && cards.length > 0) {
+        if (!emptyMessage) {
+            emptyMessage = document.createElement('div');
+            emptyMessage.className = 'no-results-message';
+            emptyMessage.innerHTML = '<i class="fas fa-search"></i><p>لم يتم العثور على تقارير تطابق معايير البحث</p>';
+            container.appendChild(emptyMessage);
+        }
+        emptyMessage.style.display = 'block';
+    } else if (emptyMessage) {
+        emptyMessage.style.display = 'none';
+    }
+}
+
+// دالة البحث في التقارير (للتوافق مع الكود القديم)
+function searchReports() {
+    applyFiltersAndSearch();
+}
+
+// دالة تصفية التقارير حسب التاريخ (للتوافق مع الكود القديم)
+function filterReportsByDate() {
+    applyFiltersAndSearch();
 }
 
 // دالة طباعة بطاقة التقرير
